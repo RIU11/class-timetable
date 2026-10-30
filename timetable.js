@@ -81,11 +81,10 @@
   }
 
   function renderGrid() {
-    var s = settings(), days = daysOf(s), r = regs(), t = curTerm();
+    var s = settings(), days = daysOf(s), r = regs();
     var box = document.getElementById("tt-box"); if (!box) return;
     var cols = "40px repeat(" + days.length + ", minmax(0,1fr))";
-    var h = '<div class="ttterm"><button type="button" id="tt-term-btn">' + esc(t.year) + "年度 " + esc(termShort(t.term)) + window.TTIco.i("chev", 14) + "</button></div>" +
-      '<div class="ttwrap"><div class="ttgrid" style="--cols:' + cols + ";--rows:" + s.periods + '">' +
+    var h = '<div class="ttwrap"><div class="ttgrid" style="--cols:' + cols + ";--rows:" + s.periods + '">' +
       '<div class="ttrow"><div class="ttcorner"></div>' + days.map(function (d) { return '<div class="ttdh"><b>' + esc(d) + "</b></div>"; }).join("") + "</div>";
     for (var p = 1; p <= s.periods; p++) {
       var t = (s.times[p - 1] || "").split("-");
@@ -124,9 +123,18 @@
       var y = +sh.el.querySelector("#tm-year").value;
       var sel = sh.el.querySelector('input[name="tm-term"]:checked');
       saveTerm({ year: y, term: sel ? sel.value : t.term });
-      sh.close(); renderGrid();
+      sh.close(); renderGrid(); renderTermTop();
     });
   }
+  function renderTermTop() {
+    var el = document.getElementById("tt-term-top"); if (!el) return;
+    var t = curTerm();
+    el.innerHTML = esc(t.year) + "年度 " + esc(termShort(t.term)) + window.TTIco.i("chev", 12);
+  }
+  (function bindTermTop() {
+    var el = document.getElementById("tt-term-top");
+    if (el) el.addEventListener("click", function () { openTermSwitch(); });
+  })();
 
   function onCellClick(day, p) {
     var r = regs(), reg = regFor(r, day, p);
@@ -314,10 +322,10 @@
     view = v; acts = a; headerActs();
     view.innerHTML = '<div id="tt-box"></div>';
     renderGrid();
+    renderTermTop();
     // タブを開くたびに view は使い回されるので、前回ぶんの仕組みを外してから付け直す（二重に反応しないように）
     if (onViewClick) view.removeEventListener("click", onViewClick);
     onViewClick = function (e) {
-      if (e.target.closest("#tt-term-btn")) { openTermSwitch(); return; }
       var c = e.target.closest(".ttcell"); if (!c) return;
       onCellClick(c.getAttribute("data-day"), +c.getAttribute("data-p"));
     };

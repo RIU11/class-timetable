@@ -35,6 +35,8 @@
     cur = id; store.set("tab", id);
     renderTabs();
     ttl.textContent = TABS.filter(function (t) { return t.id === id; })[0].name;
+    var termTop = document.getElementById("tt-term-top");
+    if (termTop) termTop.hidden = id !== "timetable";
     acts.innerHTML = "";
     // #view を丸ごと新しい入れ物に差し替える。前のタブが付けた仕組み（クリックなど）を
     // 確実に消すため（同じ入れ物を使い回すと、前のタブぶんも一緒に反応してしまうことがあった）
