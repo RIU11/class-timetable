@@ -91,3 +91,24 @@ textarea.sfield{min-height:88px;resize:vertical}
 
 input[type="time"],input[type="date"]{color-scheme:light}
 ::placeholder{color:var(--sub);opacity:.6}
+
+/* 年間予定表（月カレンダー） */
+.ancard{padding:10px 8px 14px}
+.anhead{display:flex;align-items:center;justify-content:space-between;padding:4px 8px 10px}
+.anhead b{font-size:1.02rem}
+.anhead button{background:rgba(20,30,70,.06);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:6px;display:flex}
+.anhead button:disabled{opacity:.3}
+.ancal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.anwd{text-align:center;font-size:.68rem;font-weight:700;color:var(--sub);padding:4px 0}
+.anwd.sun{color:var(--hot)}
+.anwd.sat{color:var(--acc)}
+.anday{min-height:48px;border:1px solid var(--line);border-radius:8px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:3px 1px;gap:1px;font:inherit;color:var(--text);overflow:hidden}
+.anday.empty2{visibility:hidden;border:0}
+.anday .andn{font-size:.76rem;font-weight:700}
+.anday.sun .andn{color:var(--hot)}
+.anday.sat .andn{color:var(--acc)}
+.anday.hol{background:var(--hotbg)}
+.anday.hol .andn{color:var(--hot)}
+.anday.today{border-color:var(--acc);border-width:2px}
+.anday .anlb{font-size:.5rem;color:var(--sub);line-height:1.1;white-space:nowrap}
+.anday.hol .anlb{color:var(--hot)}
