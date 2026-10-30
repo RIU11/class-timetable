@@ -34,7 +34,7 @@ main{max-width:760px;margin:0 auto;padding:8px 8px 14px}
 .ttph b{font-size:.8rem;color:var(--text)}
 .ttph .pt{font-size:.48rem;line-height:1.15;color:var(--sub)}
 .ttcorner{background:transparent}
-.ttcell{min-height:0;height:14vh;max-height:104px;min-width:0;border:1px solid var(--line);border-radius:9px;background:#fff;padding:3px 4px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1px;color:var(--text);font:inherit;overflow:hidden}
+.ttcell{min-height:54px;height:calc((100vh - 244px) / var(--rows, 6));max-height:104px;min-width:0;border:1px solid var(--line);border-radius:9px;background:#fff;padding:3px 4px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1px;color:var(--text);font:inherit;overflow:hidden}
 .ttcell .tn{width:100%;font-size:.8rem;font-weight:800;line-height:1.18;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;word-break:break-word}
 .ttcell .tt{width:100%;font-size:.62rem;color:var(--sub);line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
 .ttcell .tr{margin-top:3px;font-size:.6rem;background:rgba(20,30,70,.08);color:var(--text);border-radius:999px;padding:1px 6px;white-space:nowrap}

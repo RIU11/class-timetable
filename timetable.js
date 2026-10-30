@@ -53,7 +53,7 @@
     var s = settings(), days = daysOf(s), r = regs();
     var box = document.getElementById("tt-box"); if (!box) return;
     var cols = "40px repeat(" + days.length + ", minmax(0,1fr))";
-    var h = '<div class="ttwrap"><div class="ttgrid" style="--cols:' + cols + '">' +
+    var h = '<div class="ttwrap"><div class="ttgrid" style="--cols:' + cols + ";--rows:" + s.periods + '">' +
       '<div class="ttrow"><div class="ttcorner"></div>' + days.map(function (d) { return '<div class="ttdh"><b>' + esc(d) + "</b></div>"; }).join("") + "</div>";
     for (var p = 1; p <= s.periods; p++) {
       var t = (s.times[p - 1] || "").split("-");
@@ -69,7 +69,7 @@
       });
       h += "</div>";
     }
-    h += "</div></div>" + (editMode ? '<p class="muted small" style="margin:6px 4px 0">コマをタップすると、授業を登録・変更できます。</p>' : '<p class="muted small" style="margin:6px 4px 0">登録したコマをタップすると、シラバスが見られます。右上の「編集」で、授業を登録できます。</p>');
+    h += "</div></div>";
     box.innerHTML = h;
   }
 
