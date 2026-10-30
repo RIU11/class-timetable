@@ -97,7 +97,7 @@
   function pickerHtml(day, p, cands, existing, q) {
     return '<div class="shead"><b>' + esc(day) + "曜" + p + "限</b><button type=\"button\" data-sheet-close>" + window.TTIco.i("x", 18) + "</button></div>" +
       '<input class="sfield" id="pk-q" placeholder="授業名または教員名で検索" value="' + esc(q) + '">' +
-      (existing ? '<button class="btn danger" type="button" id="pk-clear" style="width:100%;margin-bottom:8px">このコマの登録を削除</button>' : "") +
+      (existing ? '<div style="display:flex;gap:8px;margin-bottom:8px"><button class="btn" type="button" id="pk-editreg" style="flex:1">' + window.TTIco.i("edit", 16) + "このコマを編集</button><button class=\"btn danger\" type=\"button\" id=\"pk-clear\" style=\"flex:1\">" + window.TTIco.i("trash", 16) + "削除</button></div>" : "") +
       '<button class="btn" type="button" id="pk-new" style="width:100%;margin-bottom:10px">' + window.TTIco.i("plus", 16) + "新規作成（自分で入力）</button>" +
       '<div class="clist" id="pk-list">' + pickerListHtml(cands, q) + "</div>";
   }
@@ -111,6 +111,7 @@
       var it = e.target.closest("[data-id]");
       if (it) { sh.close(); openRoomForm(day, findSyl(it.getAttribute("data-id")), existing); return; }
       if (e.target.closest("#pk-clear")) { clearReg(day, p); sh.close(); return; }
+      if (e.target.closest("#pk-editreg")) { sh.close(); openEditForm(day, existing); return; }
       if (e.target.closest("#pk-new")) { sh.close(); openCustomForm(day, p, existing && existing.type === "custom" ? existing : null); return; }
     });
   }
@@ -131,6 +132,41 @@
       sh.close();
     });
   }
+  function openEditForm(day, existing) {
+    var s = settings(), days = daysOf(s);
+    var cur = existing.type === "syllabus" ? findSyl(existing.sylId) : null;
+    var subject = cur ? cur.subject : (existing.subject || "");
+    var teacher = cur ? cur.teacher : (existing.teacher || "");
+    var note = cur ? "" : (existing.note || "");
+    var pMin = Math.min.apply(null, existing.periods), pMax = Math.max.apply(null, existing.periods);
+    var periodOpts = function (sel) {
+      var h = "";
+      for (var i = 1; i <= s.periods; i++) h += '<option value="' + i + '"' + (i === sel ? " selected" : "") + ">" + i + "限</option>";
+      return h;
+    };
+    var sh = C.openSheet(
+      '<div class="shead"><b>このコマを編集</b><button type="button" data-sheet-close>' + window.TTIco.i("x", 18) + "</button></div>" +
+      '<p class="muted small">シラバスの内容が間違っているときは、ここで書き換えられます。書き換えると、このコマは自分で入力した内容になります（元のシラバスの詳細ページは見られなくなります）。</p>' +
+      '<label class="slab">授業名</label><input class="sfield" id="cf-subject" value="' + esc(subject) + '" placeholder="例：キャラクターモデリング">' +
+      '<label class="slab">先生</label><input class="sfield" id="cf-teacher" value="' + esc(teacher) + '" placeholder="任意">' +
+      '<label class="slab">教室</label><input class="sfield" id="cf-room" value="' + esc(existing.room || "") + '" placeholder="任意">' +
+      '<label class="slab">メモ</label><textarea class="sfield" id="cf-note" placeholder="任意">' + esc(note) + "</textarea>" +
+      '<label class="slab">曜日</label><select class="sfield" id="cf-day">' + days.map(function (d) { return '<option value="' + d + '"' + (d === day ? " selected" : "") + ">" + d + "曜</option>"; }).join("") + "</select>" +
+      '<label class="slab">授業時間</label><div style="display:flex;align-items:center;gap:8px"><select class="sfield" id="cf-ps" style="margin:0">' + periodOpts(pMin) + '</select><span class="muted">〜</span><select class="sfield" id="cf-pe" style="margin:0">' + periodOpts(pMax) + "</select></div>" +
+      '<button class="btn primary" type="button" id="cf-save" style="width:100%;margin-top:4px">編集を登録</button>'
+    , { center: true });
+    sh.el.querySelector("#cf-save").addEventListener("click", function () {
+      var newSubject = sh.el.querySelector("#cf-subject").value.trim();
+      if (!newSubject) { sh.el.querySelector("#cf-subject").focus(); return; }
+      var newDay = sh.el.querySelector("#cf-day").value;
+      var ps = +sh.el.querySelector("#cf-ps").value, pe = +sh.el.querySelector("#cf-pe").value;
+      if (pe < ps) { var t = ps; ps = pe; pe = t; }
+      var periods = []; for (var i = ps; i <= pe; i++) periods.push(i);
+      updateReg(existing.key, { key: existing.key, day: newDay, periods: periods, type: "custom",
+        subject: newSubject, teacher: sh.el.querySelector("#cf-teacher").value.trim(), room: sh.el.querySelector("#cf-room").value.trim(), note: sh.el.querySelector("#cf-note").value.trim() });
+      sh.close();
+    });
+  }
   function openRoomForm(day, syl, existing) {
     var pre = existing && existing.type === "syllabus" && existing.sylId === syl.id ? existing.room : "";
     var sh = C.openSheet(
@@ -146,6 +182,10 @@
   }
   function register(reg) {
     var r = regs().filter(function (x) { return !(x.day === reg.day && x.periods.some(function (pp) { return reg.periods.indexOf(pp) >= 0; })); });
+    r.push(reg); saveRegs(r); renderGrid();
+  }
+  function updateReg(oldKey, reg) {
+    var r = regs().filter(function (x) { return x.key !== oldKey && !(x.day === reg.day && x.periods.some(function (pp) { return reg.periods.indexOf(pp) >= 0; })); });
     r.push(reg); saveRegs(r); renderGrid();
   }
   function clearReg(day, p) {
