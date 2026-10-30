@@ -15,8 +15,15 @@ jobs:
           node-version: "20"
       - name: install deps
         working-directory: scripts/push-check
-        # npmレジストリ側の一時的なエラーで落ちることがあるため、数回までは自動で再試行する
-        run: npm install || npm install || npm install
+        # npmのキャッシュが古い情報を持っていて失敗することがあるため、キャッシュを捨てつつ数回まで再試行する
+        run: |
+          for i in 1 2 3 4 5; do
+            npm install && exit 0
+            echo "npm install failed (try $i), clearing cache and retrying..."
+            npm cache clean --force
+            sleep 10
+          done
+          npm install
       - name: check and send
         working-directory: scripts/push-check
         env:
