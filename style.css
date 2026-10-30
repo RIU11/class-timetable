@@ -89,8 +89,7 @@ textarea.sfield{min-height:88px;resize:vertical}
 .litem .ld{font-size:.76rem;color:var(--gold);font-weight:700;margin-bottom:2px}
 .litem .lt{font-weight:700;white-space:pre-wrap;word-break:break-word}
 .litem button{flex:none;background:none;border:0;color:var(--sub);padding:4px}
-.litem.newday{margin-top:22px;border-top:2px solid var(--line);padding-top:16px;position:relative}
-.litem.newday::before{content:"";position:absolute;left:14px;right:14px;top:-1px;height:2px;background:linear-gradient(90deg,var(--acc),transparent)}
+.daysep{height:2px;background:var(--line);border-radius:1px;margin:18px 14px}
 .empty{text-align:center;color:var(--sub);padding:40px 14px}
 
 input[type="time"],input[type="date"]{color-scheme:light}

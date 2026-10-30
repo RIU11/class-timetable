@@ -25,7 +25,8 @@
     if (!list.length) { view.innerHTML = '<div class="empty">まだ予定がありません。右上の＋から追加できます。</div>'; return; }
     view.innerHTML = list.map(function (it) {
       var newDay = prevDate !== null && it.date !== prevDate; prevDate = it.date;
-      return '<div class="litem' + (newDay ? " newday" : "") + '" data-id="' + it.id + '"><div class="lmain"><div class="ld">' + esc(fmt(it.date)) + (it.time ? " " + esc(it.time) : "") + (it.date && it.date < today ? '　<span class="muted">終了</span>' : "") + "</div><div class=\"lt\">" + esc(it.title) + "</div>" +
+      return (newDay ? '<div class="daysep"></div>' : "") +
+        '<div class="litem" data-id="' + it.id + '"><div class="lmain"><div class="ld">' + esc(fmt(it.date)) + (it.time ? " " + esc(it.time) : "") + (it.date && it.date < today ? '　<span class="muted">終了</span>' : "") + "</div><div class=\"lt\">" + esc(it.title) + "</div>" +
         (it.note ? '<div class="muted small" style="margin-top:4px;white-space:pre-wrap">' + esc(it.note) + "</div>" : "") + '</div><button type="button" data-del="' + it.id + '">' + window.TTIco.i("trash", 18) + "</button></div>";
     }).join("");
   }
