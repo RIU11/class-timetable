@@ -29,7 +29,7 @@
   function itemsFor(e, schedToday) {
     var items = [];
     if (e && e.note) items.push(e.label);
-    (schedToday || []).forEach(function (s) { items.push(s.title); });
+    (schedToday || []).forEach(function (s) { items.push((s.time ? s.time + " " : "") + s.title); });
     return items;
   }
   // 項目数・長さに応じて、マスの中の表示を組み立てる
@@ -70,7 +70,7 @@
   function openDay(ds, e, schedToday) {
     var d = new Date(ds);
     var schedHtml = (schedToday || []).map(function (s) {
-      return '<div class="sylrow"><div class="sl">予定</div><div class="sv">' + esc(s.title) + (s.note ? "\n" + s.note : "") + "</div></div>";
+      return '<div class="sylrow"><div class="sl">' + (s.time ? esc(s.time) : "予定") + '</div><div class="sv">' + esc(s.title) + (s.note ? "\n" + s.note : "") + "</div></div>";
     }).join("");
     C.openSheet(
       '<div class="shead"><b>' + (d.getMonth() + 1) + "月" + d.getDate() + "日（" + WD[d.getDay()] + "）</b><button type=\"button\" data-sheet-close>" + window.TTIco.i("x", 18) + "</button></div>" +
