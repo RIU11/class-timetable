@@ -37,8 +37,9 @@
     ttl.textContent = TABS.filter(function (t) { return t.id === id; })[0].name;
     acts.innerHTML = "";
     view.innerHTML = "";
+    view.classList.toggle("scrollv", id === "schedule" || id === "notes");
+    view.scrollTop = 0;
     MOD[id].mount(view, acts);
-    window.scrollTo(0, 0);
     syncChrome();
     requestAnimationFrame(syncChrome);
   }
