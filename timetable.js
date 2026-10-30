@@ -52,7 +52,7 @@
   function renderGrid() {
     var s = settings(), days = daysOf(s), r = regs();
     var box = document.getElementById("tt-box"); if (!box) return;
-    var cols = "64px repeat(" + days.length + ", minmax(92px,1fr))";
+    var cols = "34px repeat(" + days.length + ", minmax(0,1fr))";
     var h = '<div class="ttwrap"><div class="ttgrid" style="--cols:' + cols + '">' +
       '<div class="ttrow"><div class="ttcorner"></div>' + days.map(function (d) { return '<div class="ttdh"><b>' + esc(d) + "</b></div>"; }).join("") + "</div>";
     for (var p = 1; p <= s.periods; p++) {
