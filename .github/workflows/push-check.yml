@@ -15,7 +15,8 @@ jobs:
           node-version: "20"
       - name: install deps
         working-directory: scripts/push-check
-        run: npm install
+        # npmレジストリ側の一時的なエラーで落ちることがあるため、数回までは自動で再試行する
+        run: npm install || npm install || npm install
       - name: check and send
         working-directory: scripts/push-check
         env:
