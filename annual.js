@@ -20,6 +20,9 @@
   function schedByDate() {
     var m = {};
     (C.store.get("sched", []) || []).forEach(function (s) { if (!s.date) return; (m[s.date] = m[s.date] || []).push(s); });
+    // 同じ日の中では、時間がある予定を時間順に先へ。時間がない予定は、追加した順のまま後ろに続く（スケジュールタブと同じ並び方）
+    var cmp = window.TTSchedCmp || function () { return 0; };
+    Object.keys(m).forEach(function (k) { m[k].sort(cmp); });
     return m;
   }
   function pad(n) { return ("0" + n).slice(-2); }

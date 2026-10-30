@@ -3,7 +3,15 @@
   var C = window.TTCommon, store = C.store, esc = C.esc;
   function items() { return store.get("sched", []); }
   function save(a) { store.set("sched", a); }
-  function sorted() { return items().slice().sort(function (a, b) { return (a.date || "9999").localeCompare(b.date || "9999") || (a.time || "").localeCompare(b.time || ""); }); }
+  // 同じ日の中では、時間がある予定を時間順に先へ。時間がない予定は、追加した順のまま後ろに続く
+  function timeCmp(a, b) {
+    if (a.time && b.time) return a.time.localeCompare(b.time);
+    if (a.time && !b.time) return -1;
+    if (!a.time && b.time) return 1;
+    return 0;
+  }
+  window.TTSchedCmp = timeCmp; // annual.js と共通で使う
+  function sorted() { return items().slice().sort(function (a, b) { return (a.date || "9999").localeCompare(b.date || "9999") || timeCmp(a, b); }); }
   function fmt(d) {
     if (!d) return "";
     var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d); if (!m) return d;
@@ -13,10 +21,11 @@
   var view = null;
 
   function render() {
-    var list = sorted(), today = new Date().toISOString().slice(0, 10);
+    var list = sorted(), today = new Date().toISOString().slice(0, 10), prevDate = null;
     if (!list.length) { view.innerHTML = '<div class="empty">まだ予定がありません。右上の＋から追加できます。</div>'; return; }
     view.innerHTML = list.map(function (it) {
-      return '<div class="litem" data-id="' + it.id + '"><div class="lmain"><div class="ld">' + esc(fmt(it.date)) + (it.time ? " " + esc(it.time) : "") + (it.date && it.date < today ? '　<span class="muted">終了</span>' : "") + "</div><div class=\"lt\">" + esc(it.title) + "</div>" +
+      var newDay = prevDate !== null && it.date !== prevDate; prevDate = it.date;
+      return '<div class="litem' + (newDay ? " newday" : "") + '" data-id="' + it.id + '"><div class="lmain"><div class="ld">' + esc(fmt(it.date)) + (it.time ? " " + esc(it.time) : "") + (it.date && it.date < today ? '　<span class="muted">終了</span>' : "") + "</div><div class=\"lt\">" + esc(it.title) + "</div>" +
         (it.note ? '<div class="muted small" style="margin-top:4px;white-space:pre-wrap">' + esc(it.note) + "</div>" : "") + '</div><button type="button" data-del="' + it.id + '">' + window.TTIco.i("trash", 18) + "</button></div>";
     }).join("");
   }
