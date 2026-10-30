@@ -69,7 +69,7 @@
       });
       h += "</div>";
     }
-    h += "</div></div>" + (editMode ? '<p class="muted small" style="margin:8px 4px">コマをタップすると、授業を登録・変更できます。</p>' : '<p class="muted small" style="margin:8px 4px">登録したコマをタップすると、シラバスが見られます。右上の「編集」で、授業を登録できます。</p>');
+    h += "</div></div>" + (editMode ? '<p class="muted small" style="margin:6px 4px 0">コマをタップすると、授業を登録・変更できます。</p>' : '<p class="muted small" style="margin:6px 4px 0">登録したコマをタップすると、シラバスが見られます。右上の「編集」で、授業を登録できます。</p>');
     box.innerHTML = h;
   }
 
