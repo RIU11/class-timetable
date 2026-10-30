@@ -32,8 +32,8 @@
   }
   function labelOf(reg) {
     if (!reg) return null;
-    if (reg.type === "syllabus") { var s = findSyl(reg.sylId); return s ? { subject: s.subject, room: reg.room || "" } : { subject: "（見つかりません）", room: reg.room || "" }; }
-    return { subject: reg.subject || "（名称未設定）", room: reg.room || "" };
+    if (reg.type === "syllabus") { var s = findSyl(reg.sylId); return s ? { subject: s.subject, teacher: s.teacher || "", room: reg.room || "" } : { subject: "（見つかりません）", teacher: "", room: reg.room || "" }; }
+    return { subject: reg.subject || "（名称未設定）", teacher: reg.teacher || "", room: reg.room || "" };
   }
   function findSyl(id) { return (window.SYLLABI || []).filter(function (x) { return x.id === id; })[0] || null; }
   function candidatesFor(day, period) {
@@ -62,7 +62,7 @@
         var reg = regFor(r, d, p), lab = labelOf(reg);
         if (lab) {
           var col = colorOf((reg.type === "syllabus" ? reg.sylId : reg.key) || (d + p));
-          h += '<button type="button" class="ttcell has' + (editMode ? " edit" : "") + '" style="border-color:' + col + ";background:" + col + "22" + '" data-day="' + d + '" data-p="' + p + '"><div class="tn">' + esc(lab.subject) + "</div>" + (lab.room ? '<div class="tr">' + esc(lab.room) + "</div>" : "") + "</button>";
+          h += '<button type="button" class="ttcell has' + (editMode ? " edit" : "") + '" style="border-color:' + col + ";background:" + col + "22" + '" data-day="' + d + '" data-p="' + p + '"><div class="tn">' + esc(lab.subject) + "</div>" + (lab.teacher ? '<div class="tt">' + esc(lab.teacher) + "</div>" : "") + (lab.room ? '<div class="tr">' + esc(lab.room) + "</div>" : "") + "</button>";
         } else {
           h += '<button type="button" class="ttcell' + (editMode ? " edit" : "") + '" data-day="' + d + '" data-p="' + p + '"></button>';
         }
