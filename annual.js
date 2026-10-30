@@ -23,12 +23,13 @@
     if (!window.ANNUAL || !window.ANNUAL.length) return '<div class="empty">年間予定表は、まだ準備中です。<br>データが届いたら、ここに表示されます。</div>';
     var cur = MONTHS[idx], map = byDate();
     var first = new Date(cur.y, cur.m - 1, 1), days = new Date(cur.y, cur.m, 0).getDate(), startWd = first.getDay();
-    var h = '<div class="ancard">' +
+    var weeks = Math.ceil((startWd + days) / 7);
+    var h = '<div class="anwrap"><div class="ancard">' +
       '<div class="anhead"><button type="button" id="an-prev" ' + (idx === 0 ? "disabled" : "") + ' style="transform:scaleX(-1)">' + window.TTIco.i("chev", 18) + '</button>' +
       "<b>" + cur.y + "年" + cur.m + "月</b>" +
       '<button type="button" id="an-next" ' + (idx === MONTHS.length - 1 ? "disabled" : "") + '>' + window.TTIco.i("chev", 18) + "</button></div>" +
       '<div class="anleg"><span><i class="lhol"></i>祝日・休日</span><span><i class="loff"></i>授業のない日</span></div>' +
-      '<div class="ancal">' + WD.map(function (w, i) { return '<div class="anwd' + (i === 0 ? " sun" : i === 6 ? " sat" : "") + '">' + w + "</div>"; }).join("");
+      '<div class="ancal" style="--an-rows:' + weeks + '">' + WD.map(function (w, i) { return '<div class="anwd' + (i === 0 ? " sun" : i === 6 ? " sat" : "") + '">' + w + "</div>"; }).join("");
     for (var i = 0; i < startWd; i++) h += '<div class="anday empty2"></div>';
     for (var d = 1; d <= days; d++) {
       var ds = cur.y + "-" + pad(cur.m) + "-" + pad(d), e = map[ds];
@@ -39,7 +40,7 @@
       h += '<button type="button" class="' + cls + (isToday ? " today" : "") + '" data-date="' + ds + '"><span class="andn">' + d + "</span>" +
         (e && e.note ? '<span class="anlb">' + esc(e.label.length > 7 ? e.label.slice(0, 6) + "…" : e.label) + "</span>" : "") + "</button>";
     }
-    h += "</div></div>" + '<p class="muted small" style="margin:4px 4px 0">学校配布の年間スケジュール（学内用）をもとにしています。訪問先の都合などで変わることがあるので、最新は学校の案内を確認してください。</p>';
+    h += "</div></div>" + '<p class="muted small anfoot">学校配布の年間スケジュール（学内用）をもとにしています。訪問先の都合などで変わることがあるので、最新は学校の案内を確認してください。</p></div>';
     return h;
   }
   function openDay(ds, e) {

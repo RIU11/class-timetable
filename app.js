@@ -20,6 +20,16 @@
       return '<button type="button" class="' + (t.id === cur ? "on" : "") + '" data-tab="' + t.id + '">' + window.TTIco.i(t.icon, 22) + "<span>" + t.name + "</span></button>";
     }).join("");
   }
+  // ヘッダーと下タブの実際の高さを測って、時間割・年間予定表が
+  // 画面にぴったり収まるようにする（機種やセーフエリアの違いでずれないように）
+  var topEl = document.querySelector(".top"), btEl = document.getElementById("btabs");
+  function syncChrome() {
+    if (topEl) document.documentElement.style.setProperty("--tt-top", topEl.offsetHeight + "px");
+    if (btEl) document.documentElement.style.setProperty("--tt-bottom", btEl.offsetHeight + "px");
+  }
+  window.addEventListener("resize", syncChrome);
+  window.addEventListener("orientationchange", function () { setTimeout(syncChrome, 60); });
+
   function go(id) {
     if (!MOD[id]) return;
     cur = id; store.set("tab", id);
@@ -29,11 +39,14 @@
     view.innerHTML = "";
     MOD[id].mount(view, acts);
     window.scrollTo(0, 0);
+    syncChrome();
+    requestAnimationFrame(syncChrome);
   }
   document.getElementById("btabs").addEventListener("click", function (e) {
     var b = e.target.closest("[data-tab]"); if (b) go(b.getAttribute("data-tab"));
   });
 
+  syncChrome();
   go(cur);
 
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () { /* オフライン対応なしで動作 */ });
