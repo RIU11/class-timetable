@@ -1,6 +1,7 @@
-var CACHE = "timetable-v2";
+var CACHE = "timetable-v3";
 var FILES = ["./", "index.html", "style.css", "common.js", "ico.js", "syllabus-data.js", "annual-data.js",
-  "timetable.js", "syllabus-view.js", "schedule.js", "annual.js", "notes.js", "notify.js", "app.js",
+  "timetable.js", "syllabus-view.js", "schedule.js", "annual.js", "notes.js", "firebase-config.js", "cloud-sync.js",
+  "notify.js", "app.js",
   "manifest.webmanifest", "icons/favicon-64.png", "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png"];
 
 self.addEventListener("install", function (e) {
@@ -21,6 +22,13 @@ self.addEventListener("fetch", function (e) {
       return res;
     }).catch(function () { return caches.match(e.request); })
   );
+});
+// サーバー（GitHub Actions）からのプッシュ通知を受け取って表示する
+self.addEventListener("push", function (e) {
+  var data = {};
+  try { data = e.data ? e.data.json() : {}; } catch (err) { /* 本文が読めない場合は空のまま */ }
+  var title = data.title || "時間割";
+  e.waitUntil(self.registration.showNotification(title, { body: data.body || "", tag: data.tag || "tt-push", icon: "icons/icon-192.png" }));
 });
 // 通知をタップしたら、開いているタブがあればそれを前面に、なければ新しく開く
 self.addEventListener("notificationclick", function (e) {

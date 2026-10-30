@@ -2,7 +2,7 @@
   "use strict";
   var C = window.TTCommon, store = C.store, esc = C.esc;
   function items() { return store.get("sched", []); }
-  function save(a) { store.set("sched", a); }
+  function save(a) { store.set("sched", a); if (window.TTCloud) window.TTCloud.syncAll(); }
   // 同じ日の中では、時間がある予定を時間順に先へ。時間がない予定は、追加した順のまま後ろに続く
   function timeCmp(a, b) {
     if (a.time && b.time) return a.time.localeCompare(b.time);
@@ -60,7 +60,13 @@
     sh.el.querySelector("#nf-save").addEventListener("click", function () {
       var enabled = sh.el.querySelector("#nf-on").checked;
       var minutes = +sh.el.querySelector("#nf-min").value;
-      function finish() { window.TTNotify.saveSettings({ enabled: enabled, minutes: minutes }); sh.close(); }
+      function finish() {
+        window.TTNotify.saveSettings({ enabled: enabled, minutes: minutes });
+        if (enabled && window.TTCloud) {
+          window.TTCloud.subscribePush().catch(function () { alert("通知の登録に失敗しました。時間をおいて、もう一度お試しください。"); });
+        }
+        sh.close();
+      }
       if (enabled && !("Notification" in window)) { alert("この環境では通知が使えません。"); enabled = false; finish(); return; }
       if (enabled && Notification.permission !== "granted") {
         Notification.requestPermission().then(function (perm) {
