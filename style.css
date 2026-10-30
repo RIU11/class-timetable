@@ -45,7 +45,8 @@ main{max-width:760px;margin:0 auto;padding:14px 8px}
 /* ダイアログ（候補選択・新規作成・シラバス詳細） */
 .sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(15,20,40,.45);animation:fadeIn .2s both}
 .sheet.center{align-items:center;padding:16px}
-.sbox{width:100%;max-width:520px;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:20px 20px 0 0;padding:16px;box-shadow:0 -4px 30px rgba(20,30,70,.15)}
+.sbox{width:100%;max-width:520px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:20px 20px 0 0;padding:16px;box-shadow:0 -4px 30px rgba(20,30,70,.15)}
+.sheet:not(.center) .sbox{min-height:min(64vh,540px)}
 .sheet.center .sbox{border-radius:20px;box-shadow:0 10px 40px rgba(20,30,70,.2)}
 .shead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
 .shead b{font-size:1.05rem}
