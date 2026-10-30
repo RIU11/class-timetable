@@ -10,17 +10,48 @@
   var DEFAULT_TIMES = ["09:30-11:00", "11:10-12:40", "13:20-14:50", "15:00-16:30", "16:40-18:10", "18:20-19:50", "20:00-21:30", "21:40-23:10"];
   var SWATCH = ["#ef6f6f", "#f0a84e", "#e8c948", "#7fce7f", "#5cc8c0", "#6fa9f0", "#9f8ef0", "#e07fd0"];
 
+  /* ---------- 年度・学期 ---------- */
+  var TERMS = [
+    { id: "1", label: "1学期 / 前期 / 春学期", short: "前期" },
+    { id: "2", label: "2学期 / 後期 / 秋学期", short: "後期" },
+    { id: "3", label: "3学期", short: "3学期" },
+    { id: "4", label: "4学期", short: "4学期" },
+    { id: "full", label: "通年", short: "通年" }
+  ];
+  function termShort(id) { var t = TERMS.filter(function (x) { return x.id === id; })[0]; return t ? t.short : id; }
+  function defaultTerm() {
+    var now = new Date(), m = now.getMonth() + 1, y = now.getFullYear();
+    var fy = m >= 4 ? y : y - 1; // 年度は4月始まり
+    return { year: fy, term: (m >= 4 && m <= 9) ? "1" : "2" };
+  }
+  function termKey(t) { return t.year + ":" + t.term; }
+  function migrateLegacy(t) {
+    // 学期切替が無かった頃のデータ（settings／reg）を、今の既定の学期に引き継ぐ
+    var k = termKey(t);
+    var legacyS = store.get("settings", null);
+    if (legacyS && store.get("settings:" + k, null) === null) store.set("settings:" + k, legacyS);
+    var legacyR = store.get("reg", null);
+    if (legacyR && store.get("reg:" + k, null) === null) store.set("reg:" + k, legacyR);
+  }
+  function curTerm() {
+    var t = store.get("term", null);
+    if (!t) { t = defaultTerm(); store.set("term", t); migrateLegacy(t); }
+    return t;
+  }
+  function saveTerm(t) { store.set("term", t); }
+
   function settings() {
-    var s = store.get("settings", null);
+    var k = termKey(curTerm());
+    var s = store.get("settings:" + k, null);
     if (!s) s = { periods: 6, dayset: "weekday6", times: DEFAULT_TIMES.slice() };
     if (!s.times) s.times = DEFAULT_TIMES.slice();
     while (s.times.length < s.periods) s.times.push(DEFAULT_TIMES[s.times.length] || "00:00-00:00");
     return s;
   }
-  function saveSettings(s) { store.set("settings", s); }
+  function saveSettings(s) { store.set("settings:" + termKey(curTerm()), s); }
   function daysOf(s) { return (DAY_SETS[s.dayset] || DAY_SETS.weekday6).days; }
-  function regs() { return store.get("reg", []); }
-  function saveRegs(r) { store.set("reg", r); }
+  function regs() { return store.get("reg:" + termKey(curTerm()), []); }
+  function saveRegs(r) { store.set("reg:" + termKey(curTerm()), r); }
 
   function colorOf(key) {
     var h = 0; for (var i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
@@ -50,10 +81,11 @@
   }
 
   function renderGrid() {
-    var s = settings(), days = daysOf(s), r = regs();
+    var s = settings(), days = daysOf(s), r = regs(), t = curTerm();
     var box = document.getElementById("tt-box"); if (!box) return;
     var cols = "40px repeat(" + days.length + ", minmax(0,1fr))";
-    var h = '<div class="ttwrap"><div class="ttgrid" style="--cols:' + cols + ";--rows:" + s.periods + '">' +
+    var h = '<div class="ttterm"><button type="button" id="tt-term-btn">' + esc(t.year) + "年度 " + esc(termShort(t.term)) + window.TTIco.i("chev", 14) + "</button></div>" +
+      '<div class="ttwrap"><div class="ttgrid" style="--cols:' + cols + ";--rows:" + s.periods + '">' +
       '<div class="ttrow"><div class="ttcorner"></div>' + days.map(function (d) { return '<div class="ttdh"><b>' + esc(d) + "</b></div>"; }).join("") + "</div>";
     for (var p = 1; p <= s.periods; p++) {
       var t = (s.times[p - 1] || "").split("-");
@@ -71,6 +103,29 @@
     }
     h += "</div></div>";
     box.innerHTML = h;
+  }
+
+  function yearOptions(sel) {
+    var base = defaultTerm().year, h = "";
+    for (var y = base - 2; y <= base + 3; y++) h += '<option value="' + y + '"' + (y === sel ? " selected" : "") + ">" + y + "</option>";
+    return h;
+  }
+  function openTermSwitch() {
+    var t = curTerm();
+    var html = '<div class="shead"><b>年度・学期切替</b><button type="button" data-sheet-close>' + window.TTIco.i("x", 18) + "</button></div>" +
+      '<p class="muted small">年度や学期が変わったときは、こちらから表示を切り替えましょう。<br>※過去に作成した時間割も引き続きご利用できます</p>' +
+      '<label class="slab">年度</label><select class="sfield" id="tm-year">' + yearOptions(t.year) + "</select>" +
+      '<label class="slab">学期</label><div class="tmlist">' + TERMS.map(function (x) {
+        return '<label class="tmopt"><input type="radio" name="tm-term" value="' + x.id + '"' + (x.id === t.term ? " checked" : "") + '><span>' + esc(x.label) + "</span></label>";
+      }).join("") + "</div>" +
+      '<button class="btn primary" type="button" id="tm-save" style="width:100%;margin-top:10px">変更する</button>';
+    var sh = C.openSheet(html, { center: true });
+    sh.el.querySelector("#tm-save").addEventListener("click", function () {
+      var y = +sh.el.querySelector("#tm-year").value;
+      var sel = sh.el.querySelector('input[name="tm-term"]:checked');
+      saveTerm({ year: y, term: sel ? sel.value : t.term });
+      sh.close(); renderGrid();
+    });
   }
 
   function onCellClick(day, p) {
@@ -262,6 +317,7 @@
     // タブを開くたびに view は使い回されるので、前回ぶんの仕組みを外してから付け直す（二重に反応しないように）
     if (onViewClick) view.removeEventListener("click", onViewClick);
     onViewClick = function (e) {
+      if (e.target.closest("#tt-term-btn")) { openTermSwitch(); return; }
       var c = e.target.closest(".ttcell"); if (!c) return;
       onCellClick(c.getAttribute("data-day"), +c.getAttribute("data-p"));
     };
