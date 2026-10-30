@@ -10,7 +10,9 @@ const db = admin.firestore();
 webpush.setVapidDetails(process.env.VAPID_SUBJECT, process.env.VAPID_PUBLIC_KEY, process.env.VAPID_PRIVATE_KEY);
 
 function targetMs(date, time) {
-  const t = new Date(date + "T" + time + ":00");
+  // date/timeは端末（日本時間）での入力値。GitHub Actionsのサーバーは
+  // UTCで動いているため、オフセットを付けずに解釈すると9時間ずれる。
+  const t = new Date(date + "T" + time + ":00+09:00");
   return Number.isNaN(t.getTime()) ? null : t.getTime();
 }
 
