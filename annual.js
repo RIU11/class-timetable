@@ -27,12 +27,14 @@
       '<div class="anhead"><button type="button" id="an-prev" ' + (idx === 0 ? "disabled" : "") + ' style="transform:scaleX(-1)">' + window.TTIco.i("chev", 18) + '</button>' +
       "<b>" + cur.y + "年" + cur.m + "月</b>" +
       '<button type="button" id="an-next" ' + (idx === MONTHS.length - 1 ? "disabled" : "") + '>' + window.TTIco.i("chev", 18) + "</button></div>" +
+      '<div class="anleg"><span><i class="lhol"></i>祝日・休日</span><span><i class="loff"></i>授業のない日</span></div>' +
       '<div class="ancal">' + WD.map(function (w, i) { return '<div class="anwd' + (i === 0 ? " sun" : i === 6 ? " sat" : "") + '">' + w + "</div>"; }).join("");
     for (var i = 0; i < startWd; i++) h += '<div class="anday empty2"></div>';
     for (var d = 1; d <= days; d++) {
       var ds = cur.y + "-" + pad(cur.m) + "-" + pad(d), e = map[ds];
       var wd = (startWd + d - 1) % 7;
-      var cls = "anday" + (wd === 0 ? " sun" : wd === 6 ? " sat" : "") + (e && e.holiday ? " hol" : "");
+      var hasNum = e && /\d/.test(e.label); // 数字が書かれている日＝授業がある日
+      var cls = "anday" + (wd === 0 ? " sun" : wd === 6 ? " sat" : "") + (e && e.holiday ? " hol" : !hasNum ? " off" : "");
       var today = new Date(); var isToday = today.getFullYear() === cur.y && today.getMonth() + 1 === cur.m && today.getDate() === d;
       h += '<button type="button" class="' + cls + (isToday ? " today" : "") + '" data-date="' + ds + '"><span class="andn">' + d + "</span>" +
         (e && e.note ? '<span class="anlb">' + esc(e.label.length > 7 ? e.label.slice(0, 6) + "…" : e.label) + "</span>" : "") + "</button>";

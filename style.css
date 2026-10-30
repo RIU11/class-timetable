@@ -112,3 +112,10 @@ input[type="time"],input[type="date"]{color-scheme:light}
 .anday.today{border-color:var(--acc);border-width:2px}
 .anday .anlb{font-size:.5rem;color:var(--sub);line-height:1.1;white-space:nowrap}
 .anday.hol .anlb{color:var(--hot)}
+.anday.off{background:rgba(108,116,144,.14)}
+.anday.off .andn{color:var(--sub)}
+.anleg{display:flex;gap:14px;flex-wrap:wrap;padding:0 8px 8px;font-size:.72rem;color:var(--sub)}
+.anleg span{display:inline-flex;align-items:center;gap:5px}
+.anleg i{width:11px;height:11px;border-radius:4px;display:inline-block}
+.anleg .lhol{background:var(--hotbg);border:1px solid var(--hot)}
+.anleg .loff{background:rgba(108,116,144,.14);border:1px solid var(--sub)}
