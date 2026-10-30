@@ -9,7 +9,8 @@ a{color:var(--acc)}
 .top{position:fixed;left:0;right:0;top:0;z-index:5;display:flex;align-items:center;gap:6px;padding:calc(10px + env(safe-area-inset-top)) 12px 10px;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .ttl{flex:0 1 auto;min-width:0;overflow:hidden}
 .top h1{margin:0;font-size:1.1rem;letter-spacing:.03em;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.term-top-btn{flex:1 1 auto;min-width:0;display:flex;align-items:center;justify-content:center;gap:3px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--text);font:inherit;font-size:.76rem;font-weight:800;box-shadow:0 1px 4px rgba(20,30,70,.06)}
+.term-top-slot{flex:1 1 auto;min-width:0;display:flex;justify-content:center}
+.term-top-btn{flex:none;max-width:100%;display:flex;align-items:center;gap:3px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;color:var(--text);font:inherit;font-size:.76rem;font-weight:800;box-shadow:0 1px 4px rgba(20,30,70,.06)}
 .term-top-btn[hidden]{display:none}
 .term-top-btn .ico{width:13px;height:13px;flex:none;transform:rotate(90deg)}
 .acts{display:flex;gap:8px;flex:0 0 auto}
