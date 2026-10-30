@@ -53,6 +53,7 @@ async function main() {
       }
     }
 
+    console.log(`  toSend=${toSend.length} subs=${subs.length}`);
     if (!toSend.length) {
       if (changed) await doc.ref.update({ notified });
       continue;
@@ -69,9 +70,10 @@ async function main() {
         });
         try {
           await webpush.sendNotification(sub, payload);
+          console.log(`  sent ok -> ${doc.id}`);
         } catch (err) {
+          console.error(`  send failed -> ${doc.id} status=${err.statusCode} msg=${err.message}`);
           if (err.statusCode === 404 || err.statusCode === 410) subOk = false;
-          else console.error("push error", doc.id, err.statusCode, err.message);
         }
       }
       if (subOk) keepSubs.push(sub);
