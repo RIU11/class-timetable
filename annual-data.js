@@ -1361,9 +1361,9 @@ window.ANNUAL = [
     {
         "date":  "2026-10-12",
         "wd":  "月",
-        "label":  "3",
-        "holiday":  false,
-        "note":  false
+        "label":  "スポーツの日（3）",
+        "holiday":  true,
+        "note":  true
     },
     {
         "date":  "2026-10-13",
@@ -1515,9 +1515,9 @@ window.ANNUAL = [
     {
         "date":  "2026-11-03",
         "wd":  "火",
-        "label":  "",
-        "holiday":  false,
-        "note":  false
+        "label":  "文化の日",
+        "holiday":  true,
+        "note":  true
     },
     {
         "date":  "2026-11-04",
@@ -1655,9 +1655,9 @@ window.ANNUAL = [
     {
         "date":  "2026-11-23",
         "wd":  "月",
-        "label":  "",
-        "holiday":  false,
-        "note":  false
+        "label":  "勤労感謝の日",
+        "holiday":  true,
+        "note":  true
     },
     {
         "date":  "2026-11-24",
@@ -2215,8 +2215,8 @@ window.ANNUAL = [
     {
         "date":  "2027-02-11",
         "wd":  "木",
-        "label":  "若きクリエーター展",
-        "holiday":  false,
+        "label":  "建国記念の日・若きクリエーター展",
+        "holiday":  true,
         "note":  true
     },
     {
@@ -2299,8 +2299,8 @@ window.ANNUAL = [
     {
         "date":  "2027-02-23",
         "wd":  "火",
-        "label":  "校内制作展準備",
-        "holiday":  false,
+        "label":  "天皇誕生日・校内制作展準備",
+        "holiday":  true,
         "note":  true
     },
     {
