@@ -13,7 +13,8 @@ a{color:var(--acc)}
 .acts button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
 .acts button:active{transform:scale(.95)}
 
-main{position:fixed;left:0;right:0;top:var(--tt-top,60px);bottom:var(--tt-bottom,84px);margin:0 auto;max-width:760px;box-sizing:border-box;padding:8px 8px 14px;overflow:hidden}
+main{position:fixed;left:0;right:0;top:var(--tt-top,60px);bottom:var(--tt-bottom,84px);margin:0 auto;max-width:760px;box-sizing:border-box;padding:8px 8px 8px;overflow:hidden}
+#tt-box{height:100%}
 main.scrollv{overflow-y:auto;-webkit-overflow-scrolling:touch}
 
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin:12px 0;box-shadow:0 6px 20px rgba(30,40,80,.07)}
