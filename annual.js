@@ -51,18 +51,21 @@
     , { center: true });
   }
 
-  var view = null;
+  var view = null, onClick = null;
   function render() { if (view) view.innerHTML = monthHtml(); }
 
   function mount(v, acts) {
     view = v; acts.innerHTML = "";
     render();
-    view.addEventListener("click", function (e) {
+    // タブを開くたびに view は使い回されるので、前回ぶんの仕組みを外してから付け直す（二重に反応しないように）
+    if (onClick) view.removeEventListener("click", onClick);
+    onClick = function (e) {
       var b;
       if ((b = e.target.closest("#an-prev"))) { if (idx > 0) { idx--; render(); } return; }
       if ((b = e.target.closest("#an-next"))) { if (idx < MONTHS.length - 1) { idx++; render(); } return; }
       if ((b = e.target.closest("[data-date]"))) { var ds = b.getAttribute("data-date"); openDay(ds, byDate()[ds]); }
-    });
+    };
+    view.addEventListener("click", onClick);
   }
   window.TTAnnual = { mount: mount };
 })();

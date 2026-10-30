@@ -36,9 +36,12 @@
     renderTabs();
     ttl.textContent = TABS.filter(function (t) { return t.id === id; })[0].name;
     acts.innerHTML = "";
-    view.innerHTML = "";
+    // #view を丸ごと新しい入れ物に差し替える。前のタブが付けた仕組み（クリックなど）を
+    // 確実に消すため（同じ入れ物を使い回すと、前のタブぶんも一緒に反応してしまうことがあった）
+    var fresh = view.cloneNode(false);
+    view.parentNode.replaceChild(fresh, view);
+    view = fresh;
     view.classList.toggle("scrollv", id === "schedule" || id === "notes");
-    view.scrollTop = 0;
     MOD[id].mount(view, acts);
     syncChrome();
     requestAnimationFrame(syncChrome);

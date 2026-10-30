@@ -254,14 +254,18 @@
   }
 
   /* ---------- マウント ---------- */
+  var onViewClick = null;
   function mount(v, a) {
     view = v; acts = a; headerActs();
     view.innerHTML = '<div id="tt-box"></div>';
     renderGrid();
-    view.addEventListener("click", function (e) {
+    // タブを開くたびに view は使い回されるので、前回ぶんの仕組みを外してから付け直す（二重に反応しないように）
+    if (onViewClick) view.removeEventListener("click", onViewClick);
+    onViewClick = function (e) {
       var c = e.target.closest(".ttcell"); if (!c) return;
       onCellClick(c.getAttribute("data-day"), +c.getAttribute("data-p"));
-    });
+    };
+    view.addEventListener("click", onViewClick);
   }
   window.TTTimetable = { mount: mount };
 })();

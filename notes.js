@@ -28,17 +28,21 @@
       save(a); sh.close(); render();
     });
   }
+  var onViewClick = null;
   function mount(v, acts) {
     view = v; view.innerHTML = "";
     acts.innerHTML = '<button type="button" id="nt-add">' + window.TTIco.i("plus", 18) + "追加</button>";
     acts.querySelector("#nt-add").addEventListener("click", function () { openEdit(null); });
     render();
-    view.addEventListener("click", function (e) {
+    // タブを開くたびに view は使い回されるので、前回ぶんの仕組みを外してから付け直す（二重に反応しないように）
+    if (onViewClick) view.removeEventListener("click", onViewClick);
+    onViewClick = function (e) {
       var d = e.target.closest("[data-del]");
       if (d) { if (confirm("このメモを削除しますか？")) { save(items().filter(function (x) { return x.id !== d.getAttribute("data-del"); })); render(); } return; }
       var it = e.target.closest(".litem");
       if (it && !e.target.closest("button")) { var rec = items().filter(function (x) { return x.id === it.getAttribute("data-id"); })[0]; if (rec) openEdit(rec); }
-    });
+    };
+    view.addEventListener("click", onViewClick);
   }
   window.TTNotes = { mount: mount };
 })();
