@@ -18,16 +18,17 @@ async function main() {
   const snap = await db.collection("users").get();
   const now = Date.now();
 
+  console.log(`users: ${snap.size}`);
   for (const doc of snap.docs) {
     const data = doc.data();
     const notif = data.notif || {};
-    if (!notif.enabled) continue;
-
     const subs = Array.isArray(data.subs) ? data.subs : [];
+    const items = Array.isArray(data.sched) ? data.sched : [];
+    console.log(`- ${doc.id}: enabled=${!!notif.enabled} minutes=${notif.minutes} subs=${subs.length} sched=${items.length}`);
+    if (!notif.enabled) continue;
     if (!subs.length) continue;
 
     const minutes = Number(notif.minutes) || 10;
-    const items = Array.isArray(data.sched) ? data.sched : [];
     const notified = { ...(data.notified || {}) };
     const validIds = new Set(items.map((it) => it.id));
     let changed = false;
@@ -36,13 +37,16 @@ async function main() {
       if (!validIds.has(id)) { delete notified[id]; changed = true; }
     }
 
+    // GitHub Actionsの定期実行は数分ずれることがあるため、しきい値を過ぎたあとも
+    // 締切から30分後までは「遅れて届く」形で拾う（完全に無視されるよりはよい）
+    const GRACE_MS = 30 * 60000;
     const toSend = [];
     for (const it of items) {
       if (!it.date || !it.time) continue;
       const target = targetMs(it.date, it.time);
       if (target == null) continue;
       const notifyAt = target - minutes * 60000;
-      if (now >= notifyAt && now < target && !notified[it.id]) {
+      if (now >= notifyAt && now < target + GRACE_MS && !notified[it.id]) {
         toSend.push(it);
         notified[it.id] = true;
         changed = true;
