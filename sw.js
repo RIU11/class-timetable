@@ -1,6 +1,6 @@
-var CACHE = "timetable-v1";
+var CACHE = "timetable-v2";
 var FILES = ["./", "index.html", "style.css", "common.js", "ico.js", "syllabus-data.js", "annual-data.js",
-  "timetable.js", "syllabus-view.js", "schedule.js", "annual.js", "notes.js", "app.js",
+  "timetable.js", "syllabus-view.js", "schedule.js", "annual.js", "notes.js", "notify.js", "app.js",
   "manifest.webmanifest", "icons/favicon-64.png", "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png"];
 
 self.addEventListener("install", function (e) {
@@ -20,5 +20,15 @@ self.addEventListener("fetch", function (e) {
       caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
       return res;
     }).catch(function () { return caches.match(e.request); })
+  );
+});
+// 通知をタップしたら、開いているタブがあればそれを前面に、なければ新しく開く
+self.addEventListener("notificationclick", function (e) {
+  e.notification.close();
+  e.waitUntil(
+    self.clients.matchAll({ type: "window" }).then(function (list) {
+      for (var i = 0; i < list.length; i++) { if ("focus" in list[i]) return list[i].focus(); }
+      if (self.clients.openWindow) return self.clients.openWindow("./");
+    })
   );
 });

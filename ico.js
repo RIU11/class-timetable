@@ -11,7 +11,8 @@
     x: '<path d="M6 6l12 12M18 6L6 18"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
     trash: '<path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2m-9 0 1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/><path d="M10 11v6M14 11v6"/>',
-    chev: '<path d="M9 6l6 6-6 6"/>'
+    chev: '<path d="M9 6l6 6-6 6"/>',
+    bell: '<path d="M6 8a6 6 0 0 1 12 0c0 5 1.5 6.5 2 7.5a1 1 0 0 1-.9 1.5H4.9a1 1 0 0 1-.9-1.5C4.5 14.5 6 13 6 8Z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/>'
   };
   function i(name, size) {
     var s = size || 22;

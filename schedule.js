@@ -47,10 +47,37 @@
       save(a); sh.close(); render();
     });
   }
+  function openNotifSettings() {
+    var s = window.TTNotify.settings();
+    var opts = [5, 10, 15, 30, 60, 120, 180, 1440];
+    var html = '<div class="shead"><b>通知設定</b><button type="button" data-sheet-close>' + window.TTIco.i("x", 18) + "</button></div>" +
+      '<div class="srow"><span>通知する</span><label class="toggle"><input type="checkbox" id="nf-on"' + (s.enabled ? " checked" : "") + '><span class="trk"></span></label></div>' +
+      '<label class="slab">何分前に通知する</label>' +
+      '<select class="sfield" id="nf-min">' + opts.map(function (m) { return '<option value="' + m + '"' + (m === s.minutes ? " selected" : "") + '>' + (m >= 60 ? (m / 60) + "時間前" : m + "分前") + "</option>"; }).join("") + "</select>" +
+      '<p class="muted small" style="margin-top:8px">時間が設定されている予定だけが対象です。アプリを開いている間に通知します（スマホでアプリを完全に閉じていると届かないことがあります）。</p>' +
+      '<button class="btn primary" type="button" id="nf-save" style="width:100%;margin-top:6px">保存する</button>';
+    var sh = C.openSheet(html, { center: true });
+    sh.el.querySelector("#nf-save").addEventListener("click", function () {
+      var enabled = sh.el.querySelector("#nf-on").checked;
+      var minutes = +sh.el.querySelector("#nf-min").value;
+      function finish() { window.TTNotify.saveSettings({ enabled: enabled, minutes: minutes }); sh.close(); }
+      if (enabled && !("Notification" in window)) { alert("この環境では通知が使えません。"); enabled = false; finish(); return; }
+      if (enabled && Notification.permission !== "granted") {
+        Notification.requestPermission().then(function (perm) {
+          if (perm !== "granted") { enabled = false; alert("通知が許可されなかったため、通知はオフのままにします。"); }
+          finish();
+        });
+      } else {
+        finish();
+      }
+    });
+  }
   var onViewClick = null;
   function mount(v, acts) {
     view = v; view.innerHTML = "";
-    acts.innerHTML = '<button type="button" id="sc-add">' + window.TTIco.i("plus", 18) + "追加</button>";
+    acts.innerHTML = '<button type="button" id="sc-notif">' + window.TTIco.i("bell", 18) + "</button>" +
+      '<button type="button" id="sc-add">' + window.TTIco.i("plus", 18) + "追加</button>";
+    acts.querySelector("#sc-notif").addEventListener("click", openNotifSettings);
     acts.querySelector("#sc-add").addEventListener("click", function () { openAdd(null); });
     render();
     // タブを開くたびに view は使い回されるので、前回ぶんの仕組みを外してから付け直す（二重に反応しないように）
