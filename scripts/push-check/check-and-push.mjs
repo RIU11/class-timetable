@@ -56,9 +56,6 @@ async function main() {
     }
 
     console.log(`  toSend=${toSend.length} subs=${subs.length}`);
-    console.log(`  items: ${items.map((it) => it.id + "/" + it.date + " " + it.time).join(", ")}`);
-    console.log(`  notifiedIds: ${Object.keys(notified).join(", ")}`);
-    console.log(`  sentIds: ${toSend.map((it) => it.id).join(", ")}`);
     if (!toSend.length) {
       if (changed) await doc.ref.update({ notified });
       continue;
