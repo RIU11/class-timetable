@@ -113,10 +113,14 @@ input[type="time"],input[type="date"]{color-scheme:light}
 .anday.hol{background:var(--hotbg)}
 .anday.hol .andn{color:var(--hot)}
 .anday.today{border-color:var(--acc);border-width:2px}
-.anday .anlb{font-size:.58rem;color:var(--sub);line-height:1.15;white-space:nowrap}
+.anday .anlb{width:100%;font-size:.56rem;color:var(--sub);line-height:1.15;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;text-align:center}
+.anday .anlb.sm{font-size:.5rem;-webkit-line-clamp:1;white-space:nowrap;text-overflow:ellipsis}
+.anday .anmore{font-size:.48rem;font-weight:700;color:var(--acc);background:var(--accbg);border-radius:999px;padding:0 5px;margin-top:1px;white-space:nowrap}
 .anday.hol .anlb{color:var(--hot)}
 .anday.off{background:rgba(108,116,144,.14)}
 .anday.off .andn{color:var(--sub)}
+.anday.has-sc{position:relative}
+.anday.has-sc::after{content:"";position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:var(--acc)}
 .anfoot{flex:none;margin:6px 6px 0}
 .anleg{display:flex;gap:14px;flex-wrap:wrap;padding:0 8px 8px;font-size:.72rem;color:var(--sub)}
 .anleg span{display:inline-flex;align-items:center;gap:5px}
