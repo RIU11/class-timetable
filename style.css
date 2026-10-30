@@ -46,7 +46,7 @@ main.scrollv{overflow-y:auto;-webkit-overflow-scrolling:touch}
 /* ダイアログ（候補選択・新規作成・シラバス詳細） */
 .sheet{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(15,20,40,.45);animation:fadeIn .2s both}
 .sheet.center{align-items:center;padding:16px}
-.sbox{width:100%;max-width:520px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:20px 20px 0 0;padding:16px;box-shadow:0 -4px 30px rgba(20,30,70,.15)}
+.sbox{width:100%;max-width:520px;max-height:90vh;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;-webkit-overflow-scrolling:touch;background:#fff;border:1px solid var(--line);border-radius:20px 20px 0 0;padding:16px;box-shadow:0 -4px 30px rgba(20,30,70,.15)}
 .sheet:not(.center) .sbox{min-height:min(64vh,540px)}
 .sheet.center .sbox{border-radius:20px;box-shadow:0 10px 40px rgba(20,30,70,.2)}
 .shead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
@@ -73,8 +73,8 @@ textarea.sfield{min-height:88px;resize:vertical}
 .sylrow:last-child{border-bottom:0}
 .sylrow .sl{flex:0 0 92px;color:var(--sub)}
 .sylrow .sv{flex:1;white-space:pre-wrap}
-.plantbl{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px}
-.plantbl th,.plantbl td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:top}
+.plantbl{width:100%;table-layout:fixed;border-collapse:collapse;font-size:.82rem;margin-top:6px}
+.plantbl th,.plantbl td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:top;word-break:break-word;overflow-wrap:break-word}
 .plantbl th{color:var(--sub);font-weight:700;font-size:.74rem}
 .plantbl td.pd{white-space:nowrap;color:var(--sub)}
 
