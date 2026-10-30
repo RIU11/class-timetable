@@ -93,8 +93,8 @@ input[type="time"],input[type="date"]{color-scheme:light}
 ::placeholder{color:var(--sub);opacity:.6}
 
 /* 年間予定表（月カレンダー） */
-.ancard{padding:10px 8px 14px}
-.anhead{display:flex;align-items:center;justify-content:space-between;padding:4px 8px 10px}
+.ancard{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 6px 20px rgba(30,40,80,.07);padding:10px 2px 12px;margin:12px 0}
+.anhead{display:flex;align-items:center;justify-content:space-between;padding:4px 6px 10px}
 .anhead b{font-size:1.02rem}
 .anhead button{background:rgba(20,30,70,.06);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:6px;display:flex}
 .anhead button:disabled{opacity:.3}

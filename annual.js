@@ -23,7 +23,7 @@
     if (!window.ANNUAL || !window.ANNUAL.length) return '<div class="empty">年間予定表は、まだ準備中です。<br>データが届いたら、ここに表示されます。</div>';
     var cur = MONTHS[idx], map = byDate();
     var first = new Date(cur.y, cur.m - 1, 1), days = new Date(cur.y, cur.m, 0).getDate(), startWd = first.getDay();
-    var h = '<div class="card ancard">' +
+    var h = '<div class="ancard">' +
       '<div class="anhead"><button type="button" id="an-prev" ' + (idx === 0 ? "disabled" : "") + ' style="transform:scaleX(-1)">' + window.TTIco.i("chev", 18) + '</button>' +
       "<b>" + cur.y + "年" + cur.m + "月</b>" +
       '<button type="button" id="an-next" ' + (idx === MONTHS.length - 1 ? "disabled" : "") + '>' + window.TTIco.i("chev", 18) + "</button></div>" +
