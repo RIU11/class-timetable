@@ -88,7 +88,7 @@
       '<div class="ttrow"><div class="ttcorner"></div>' + days.map(function (d) { return '<div class="ttdh"><b>' + esc(d) + "</b></div>"; }).join("") + "</div>";
     for (var p = 1; p <= s.periods; p++) {
       var t = (s.times[p - 1] || "").split("-");
-      h += '<div class="ttrow"><div class="ttph"><b>' + p + "</b><span class=\"pt\">" + esc(t[0] || "") + "</span><span class=\"pt\">" + esc(t[1] || "") + "</span></div>";
+      h += '<div class="ttrow"><div class="ttph"><b>' + p + "</b><span class=\"pt\">" + esc(t[0] || "") + "</span><span class=\"ttwave\">〜</span><span class=\"pt\">" + esc(t[1] || "") + "</span></div>";
       days.forEach(function (d) {
         var reg = regFor(r, d, p), lab = labelOf(reg);
         if (lab) {

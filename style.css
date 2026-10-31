@@ -55,6 +55,7 @@ main.scrollv{overflow-y:auto;-webkit-overflow-scrolling:touch}
 .ttdh b{font-size:.74rem;color:var(--text)}
 .ttph b{font-size:.8rem;color:var(--text)}
 .ttph .pt{font-size:.48rem;line-height:1.15;color:var(--sub)}
+.ttph .ttwave{display:block;font-size:.5rem;line-height:1;color:var(--sub);transform:rotate(90deg)}
 .ttcorner{background:transparent}
 .ttcell{min-height:0;height:100%;min-width:0;border:1px solid var(--line);border-radius:9px;background:#fff;padding:3px 4px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:1px;color:var(--text);font:inherit;overflow:hidden}
 .ttcell .tn{width:100%;font-size:.66rem;font-weight:800;line-height:1.22;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;word-break:break-word}
