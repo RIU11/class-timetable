@@ -13,12 +13,17 @@
   var CURRENT = ENTRIES[0] ? ENTRIES[0].id : "";
 
   function show() {
-    var C = window.TTCommon;
+    var C = window.TTCommon, store = C.store;
     var e = ENTRIES[0]; if (!e) return;
     var html = '<div class="shead"><b>' + C.esc(e.title || "お知らせ") + "</b><button type=\"button\" data-sheet-close>" + window.TTIco.i("x", 18) + "</button></div>" +
       '<ul class="whatsnew-list">' + (e.body || []).map(function (b) { return "<li>" + C.esc(b).replace("{bell}", '<span class="wn-ico">' + window.TTIco.i("bell", 16) + "</span>") + "</li>"; }).join("") + "</ul>" +
+      '<label class="wn-check"><input type="checkbox" id="wn-dontshow">今後表示しない</label>' +
       '<button class="btn primary" type="button" id="wn-close" style="width:100%;margin-top:10px">閉じる</button>';
     var sh = C.openSheet(html, { center: true });
+    // どの閉じ方（×・背景タップ・この閉じるボタン）でも反映されるよう、チェックの変化で即座に保存する
+    sh.el.querySelector("#wn-dontshow").addEventListener("change", function () {
+      store.set("whatsnew_seen", this.checked ? CURRENT : null);
+    });
     sh.el.querySelector("#wn-close").addEventListener("click", sh.close);
   }
 
@@ -26,7 +31,7 @@
     if (!CURRENT) return;
     var store = window.TTCommon.store;
     var seen = store.get("whatsnew_seen", null);
-    if (seen !== CURRENT) { store.set("whatsnew_seen", CURRENT); show(); }
+    if (seen !== CURRENT) show();
   }
   window.TTWhatsNew = { checkAndShow: checkAndShow };
 })();
