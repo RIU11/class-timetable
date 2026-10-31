@@ -18,6 +18,41 @@
     var wd = ["日", "月", "火", "水", "木", "金", "土"][new Date(+m[1], +m[2] - 1, +m[3]).getDay()];
     return +m[2] + "/" + +m[3] + "(" + wd + ")";
   }
+  function pad2(n) { return (n < 10 ? "0" : "") + n; }
+  function icsEscape(s) { return String(s || "").replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n"); }
+  // iPhone標準のカレンダーに登録するための.icsファイルを作る（Web Pushが届かないとき用の保険）
+  function icsFor(it) {
+    var s = window.TTNotify.settings(), minutes = (s && s.minutes) || 10;
+    var dt = it.date.replace(/-/g, "") + "T" + it.time.replace(":", "") + "00";
+    var now = new Date();
+    var stamp = now.getUTCFullYear() + pad2(now.getUTCMonth() + 1) + pad2(now.getUTCDate()) + "T" +
+      pad2(now.getUTCHours()) + pad2(now.getUTCMinutes()) + pad2(now.getUTCSeconds()) + "Z";
+    var lines = [
+      "BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//class-timetable//JP", "CALSCALE:GREGORIAN",
+      "BEGIN:VEVENT",
+      "UID:" + it.id + "@class-timetable",
+      "DTSTAMP:" + stamp,
+      "DTSTART:" + dt,
+      "SUMMARY:" + icsEscape(it.title),
+      it.note ? "DESCRIPTION:" + icsEscape(it.note) : null,
+      "BEGIN:VALARM",
+      "TRIGGER:-PT" + minutes + "M",
+      "ACTION:DISPLAY",
+      "DESCRIPTION:" + icsEscape(it.title),
+      "END:VALARM",
+      "END:VEVENT", "END:VCALENDAR"
+    ].filter(Boolean);
+    return lines.join("\r\n");
+  }
+  function downloadIcs(it) {
+    var blob = new Blob([icsFor(it)], { type: "text/calendar;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = (it.title || "予定") + ".ics";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+
   var view = null;
 
   function render() {
@@ -27,7 +62,9 @@
       var newDay = prevDate !== null && it.date !== prevDate; prevDate = it.date;
       return (newDay ? '<div class="daysep"></div>' : "") +
         '<div class="litem" data-id="' + it.id + '"><div class="lmain"><div class="ld">' + esc(fmt(it.date)) + (it.time ? " " + esc(it.time) : "") + (it.date && it.date < today ? '　<span class="muted">終了</span>' : "") + "</div><div class=\"lt\">" + esc(it.title) + "</div>" +
-        (it.note ? '<div class="muted small" style="margin-top:4px;white-space:pre-wrap">' + esc(it.note) + "</div>" : "") + '</div><button type="button" data-del="' + it.id + '">' + window.TTIco.i("trash", 18) + "</button></div>";
+        (it.note ? '<div class="muted small" style="margin-top:4px;white-space:pre-wrap">' + esc(it.note) + "</div>" : "") + '</div>' +
+        (it.time ? '<button type="button" data-ics="' + it.id + '" title="カレンダーに追加">' + window.TTIco.i("cal", 18) + "</button>" : "") +
+        '<button type="button" data-del="' + it.id + '">' + window.TTIco.i("trash", 18) + "</button></div>";
     }).join("");
   }
   function openAdd(existing) {
@@ -54,7 +91,7 @@
       '<div class="srow"><span>通知する</span><label class="toggle"><input type="checkbox" id="nf-on"' + (s.enabled ? " checked" : "") + '><span class="trk"></span></label></div>' +
       '<label class="slab">何分前に通知する</label>' +
       '<select class="sfield" id="nf-min">' + opts.map(function (m) { return '<option value="' + m + '"' + (m === s.minutes ? " selected" : "") + '>' + (m >= 60 ? (m / 60) + "時間前" : m + "分前") + "</option>"; }).join("") + "</select>" +
-      '<p class="muted small" style="margin-top:8px">時間が設定されている予定だけが対象です。アプリを開いている間に通知します（スマホでアプリを完全に閉じていると届かないことがあります）。</p>' +
+      '<p class="muted small" style="margin-top:8px">時間が設定されている予定だけが対象です。iPhoneでアプリを完全に閉じてスリープ中だと、通知が届かないことがあります。確実に届けたい予定は、一覧のカレンダーアイコンから標準カレンダーにも追加しておくと安心です。</p>' +
       '<button class="btn primary" type="button" id="nf-save" style="width:100%;margin-top:6px">保存する</button>';
     var sh = C.openSheet(html, { center: true });
     sh.el.querySelector("#nf-save").addEventListener("click", function () {
@@ -89,6 +126,8 @@
     // タブを開くたびに view は使い回されるので、前回ぶんの仕組みを外してから付け直す（二重に反応しないように）
     if (onViewClick) view.removeEventListener("click", onViewClick);
     onViewClick = function (e) {
+      var ic = e.target.closest("[data-ics]");
+      if (ic) { var rec0 = items().filter(function (x) { return x.id === ic.getAttribute("data-ics"); })[0]; if (rec0) downloadIcs(rec0); return; }
       var d = e.target.closest("[data-del]");
       if (d) { if (confirm("この予定を削除しますか？")) { save(items().filter(function (x) { return x.id !== d.getAttribute("data-del"); })); render(); } return; }
       var it = e.target.closest(".litem");
