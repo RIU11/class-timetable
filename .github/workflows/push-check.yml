@@ -5,6 +5,10 @@ on:
     - cron: "*/5 * * * *"
   workflow_dispatch: {}
 
+concurrency:
+  group: push-check
+  cancel-in-progress: false
+
 jobs:
   check:
     runs-on: ubuntu-latest
