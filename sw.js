@@ -1,7 +1,7 @@
-var CACHE = "timetable-v3";
+var CACHE = "timetable-v4";
 var FILES = ["./", "index.html", "style.css", "common.js", "ico.js", "syllabus-data.js", "annual-data.js",
   "timetable.js", "syllabus-view.js", "schedule.js", "annual.js", "notes.js", "firebase-config.js", "cloud-sync.js",
-  "notify.js", "app.js",
+  "notify.js", "whatsnew.js", "app.js",
   "manifest.webmanifest", "icons/favicon-64.png", "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png"];
 
 self.addEventListener("install", function (e) {

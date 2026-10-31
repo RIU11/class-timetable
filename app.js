@@ -54,6 +54,7 @@
 
   syncChrome();
   go(cur);
+  if (window.TTWhatsNew) window.TTWhatsNew.checkAndShow();
 
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(function () { /* オフライン対応なしで動作 */ });
 })();
