@@ -21,8 +21,11 @@ a{color:var(--acc)}
 main{position:fixed;left:0;right:0;top:var(--tt-top,60px);bottom:var(--tt-bottom,84px);margin:0 auto;max-width:760px;box-sizing:border-box;padding:8px 8px 8px;overflow:hidden}
 #tt-box{height:100%}
 .tmlist{border-top:1px solid var(--line)}
-.whatsnew-list{margin:4px 0;padding-left:20px}
-.whatsnew-list li{margin:8px 0;line-height:1.5}
+.whatsnew-list{list-style:none;margin:4px 0;padding:0}
+.whatsnew-list li{margin:0 0 14px}
+.whatsnew-list li:last-child{margin-bottom:4px}
+.wn-loc{display:inline-block;font-size:.72rem;font-weight:800;color:var(--acc);background:var(--accbg);border-radius:999px;padding:3px 10px;margin-bottom:6px}
+.wn-text{margin:0;line-height:1.55;font-size:.92rem}
 .wn-ico{display:inline-flex;vertical-align:-4px;margin:0 2px;padding:2px 4px;border-radius:6px;background:var(--accbg);color:var(--acc)}
 .wn-check{display:flex;align-items:center;gap:8px;margin:10px 2px 0;font-size:.86rem;color:var(--sub)}
 .wn-check input{width:18px;height:18px;accent-color:var(--acc)}
