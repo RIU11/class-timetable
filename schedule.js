@@ -53,19 +53,32 @@
     setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
   }
 
-  var view = null;
+  var view = null, doneOpen = false;
 
-  function render() {
-    var list = sorted(), today = new Date().toISOString().slice(0, 10), prevDate = null;
-    if (!list.length) { view.innerHTML = '<div class="empty">まだ予定がありません。右上の＋から追加できます。</div>'; return; }
-    view.innerHTML = list.map(function (it) {
+  function rowsHtml(list) {
+    var prevDate = null;
+    return list.map(function (it) {
       var newDay = prevDate !== null && it.date !== prevDate; prevDate = it.date;
       return (newDay ? '<div class="daysep"></div>' : "") +
-        '<div class="litem" data-id="' + it.id + '"><div class="lmain"><div class="ld">' + esc(fmt(it.date)) + (it.time ? " " + esc(it.time) : "") + (it.date && it.date < today ? '　<span class="muted">終了</span>' : "") + "</div><div class=\"lt\">" + esc(it.title) + "</div>" +
+        '<div class="litem" data-id="' + it.id + '"><div class="lmain"><div class="ld">' + esc(fmt(it.date)) + (it.time ? " " + esc(it.time) : "") + "</div><div class=\"lt\">" + esc(it.title) + "</div>" +
         (it.note ? '<div class="muted small" style="margin-top:4px;white-space:pre-wrap">' + esc(it.note) + "</div>" : "") + '</div>' +
         (it.time ? '<button type="button" data-ics="' + it.id + '" title="カレンダーに追加">' + window.TTIco.i("cal", 18) + "</button>" : "") +
         '<button type="button" data-del="' + it.id + '">' + window.TTIco.i("trash", 18) + "</button></div>";
     }).join("");
+  }
+  function render() {
+    var list = sorted(), today = new Date().toISOString().slice(0, 10);
+    if (!list.length) { view.innerHTML = '<div class="empty">まだ予定がありません。右上の＋から追加できます。</div>'; return; }
+    var upcoming = list.filter(function (it) { return !(it.date && it.date < today); });
+    var past = list.filter(function (it) { return it.date && it.date < today; });
+    var h = rowsHtml(upcoming);
+    if (past.length) {
+      h += '<div class="donesep"></div>' +
+        '<button type="button" class="donehead" id="sc-donehead"><span>終了した予定（' + past.length + '件）</span>' +
+        '<span class="donechev' + (doneOpen ? " open" : "") + '">' + window.TTIco.i("chev", 16) + "</span></button>" +
+        (doneOpen ? rowsHtml(past) : "");
+    }
+    view.innerHTML = h;
   }
   function openAdd(existing) {
     var sh = C.openSheet(
@@ -117,7 +130,7 @@
   }
   var onViewClick = null;
   function mount(v, acts) {
-    view = v; view.innerHTML = "";
+    view = v; view.innerHTML = ""; doneOpen = false;
     acts.innerHTML = '<button type="button" id="sc-notif">' + window.TTIco.i("bell", 18) + "</button>" +
       '<button type="button" id="sc-add">' + window.TTIco.i("plus", 18) + "追加</button>";
     acts.querySelector("#sc-notif").addEventListener("click", openNotifSettings);
@@ -126,6 +139,7 @@
     // タブを開くたびに view は使い回されるので、前回ぶんの仕組みを外してから付け直す（二重に反応しないように）
     if (onViewClick) view.removeEventListener("click", onViewClick);
     onViewClick = function (e) {
+      if (e.target.closest("#sc-donehead")) { doneOpen = !doneOpen; render(); return; }
       var ic = e.target.closest("[data-ics]");
       if (ic) { var rec0 = items().filter(function (x) { return x.id === ic.getAttribute("data-ics"); })[0]; if (rec0) downloadIcs(rec0); return; }
       var d = e.target.closest("[data-del]");
